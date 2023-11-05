@@ -1,30 +1,25 @@
-import time
-
 import cv2
 import numpy as np
-from mss import mss
+import os
+import pyautogui
 
+output = "video.avi"
+img = pyautogui.screenshot()
+img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+#get info from img
+height, width, channels = img.shape
+# Define the codec and create VideoWriter object
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+out = cv2.VideoWriter(output, fourcc, 20.0, (width, height))
 
-def record(name):
-    with mss() as sct:
-        # mon = {'top': 160, 'left': 160, 'width': 200, 'height': 200}
-        screengrab = sct.monitors[0]
-        name = name + '.mp4'
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        desired_fps = 30.0
-        out = cv2.VideoWriter(name, fourcc, desired_fps,
-                              (screengrab['width'], screengrab['height']))
-        last_time = 0
-        while True:
-            img = sct.grab(screengrab)
-            # cv2.imshow('test', np.array(img))
-            if time.time() - last_time > 1./desired_fps:
-                last_time = time.time()
-                destRGB = cv2.cvtColor(np.array(img), cv2.COLOR_BGRA2BGR)
-                out.write(destRGB)
-            if cv2.waitKey(25) & 0xFF == ord('q'):
-                cv2.destroyAllWindows()
-                break
+while(True):
+    try:
+        img = pyautogui.screenshot()
+        image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        out.write(image)
+        StopIteration(0.5)
+    except KeyboardInterrupt:
+        break
 
-
-record("Video")
+out.release()
+cv2.destroyAllWindows()
